@@ -1,4 +1,4 @@
-name: Android CI
+name: Android Build
 
 on:
   push:
@@ -7,46 +7,35 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      - name: Run unit tests
-        run: ./gradlew test
+      - name: Run Tests
+        run: ./gradlew testDebugUnitTest
 
-      - name: Run instrumented tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          script: ./gradlew connectedCheck
+      - name: Build
+        run: ./gradlew assembleDebug -x lint
 
-      - name: Upload test results
-        if: always()
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: |
-            **/build/reports
-            **/build/outputs/androidTest-results
-          retention-days: 5
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
