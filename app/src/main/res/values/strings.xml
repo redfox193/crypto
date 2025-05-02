@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">CryptoTT</string>
+    <string name="wallet_balance">Баланс</string>
+    <string name="crypto_rates">Курсы валют</string>
+    <string name="trade">Торговля</string>
+    <string name="buy">Купить</string>
+    <string name="sell">Продать</string>
+    <string name="bought">Куплено</string>
+    <string name="sold">Продано</string>
+    <string name="profit">Заработано</string>
+    <string name="transactions">История транзакций</string>
+</resources>
